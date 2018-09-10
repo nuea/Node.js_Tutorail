@@ -1,0 +1,465 @@
+Node.js Tutorial
+
+Download and Install Install Node.js
+    1. Download and Install Node.js [https://nodejs.org/en/]
+    2. Check version Node.js 
+        Open Terminal cmd: node -v
+
+Node.js Introduction
+    What is Node.js?
+        - Node.js is an open source server environment.
+        - Node.js is free.
+        - Node.js runs on various platforms (Windows, Linux, Unix, Mac OS X, etc.)
+        - Node.js uses JavaScript on the server.
+    What Can Node.js Do?
+        - Node.js can generate dynamic page content
+        - Node.js can create, open, read, write, delete, and close files on the server
+        - Node.js can collect form data
+        - Node.js can add, delete, modify data in your database
+
+Node.js Get Started
+    1. Create a Folder
+        Create folder will be named "Node.js_Tutorial" and we will place it on "Desktop".
+
+    2. Create a File
+        Create file name "demo.js" in "Node.js_Tutorial" folder, and add the following code:
+        :   var http = require('http');     //Import HTTP Modul
+
+            http.createServer(function (request, response) {        //Create Server Instance
+                // Send the HTTP header 
+                // HTTP Status: 200 : OK
+                // Content Type: text/html
+                response.writeHead(200, {'Content-Type': 'text/html'});
+                    
+                response.end('Hello World!');       // Send the response body as "Hello World"
+            }).listen(8080);         // Binding Server Instace with the Post No. 8081
+
+            // Console will print the message
+            console.log('Server running at http://localhost:8080/');
+
+    3. Executing a File
+        Execute "demo.js" file using Node.js interpreter to see the result: node demo.js
+
+Node.js Modules
+    What is a Module in Node.js?
+        Consider modules to be the same as JavaScript libraries.
+        A set of functions you want to include in your application.
+
+    Include Modules
+        To include a module, use the require() function with the name of the module: var http = require('http');
+        Now your application has access to the HTTP module, and is able to create a server:
+            http.createServer(function (req, res) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.end('Hello World!');
+            }).listen(8080);
+
+    Create Your Own Modules
+        You can create your own modules, and easily include them in your applications.
+        The following example creates a module that returns a date and time object:
+        Example: Create a module that returns the current date and time:
+            exports.myDateTime = function () {
+                return Date();
+            };
+
+        Use the 'exports' keyword to make properties and methods available outside the module file.
+        Save the code above in a file called "demo_create_module.js"
+
+    Include Your Own Module
+        Now you can include and use the module in any of your Node.js files.    
+        Example: Use the module "demo_create_module" in a "demo_include_module" file:
+            var http = require('http');
+                var dt = require('./demo_create_module');
+
+                http.createServer(function (req, res) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write("The date and time are currently: " + dt.myDateTime());
+                    res.end();
+                }).listen(8080);
+
+        Notice that we use "./" to locate the module
+
+Node.js HTTP Module
+    The Built-in HTTP Module
+        Node.js has a built-in module called HTTP, which allows Node.js to transfer data over the Hyper Text Transfer Protocol (HTTP).
+        To include the HTTP module, use the "require()" method: var http = require('http');
+    
+    Node.js as a Web Server
+        The HTTP module can create an HTTP server that listens to server ports and gives a response back to the client.
+        Use the "createServer()" method to create an HTTP server:
+            var http = require('http');
+
+            //create a server object:
+            http.createServer(function (req, res) {
+                res.write('Hello World!'); //write a response to the client
+                res.end(); //end the response
+            }).listen(8080); //the server object listens on port 8080
+
+        The function passed into the "http.createServer()" method, will be executed when someone tries to access the computer on port 8080.
+
+    Add an HTTP Header
+        If the response from the HTTP server is supposed to be displayed as HTML, you should include an HTTP header with the correct content type:
+            var http = require('http');
+            http.createServer(function (req, res) {
+                res.writeHead(200, {'Content-Type': 'text/html'});      //here
+                res.write('Hello World!');
+                res.end();
+            }).listen(8080);
+
+        The first argument of the "res.writeHead()" method is the status code, 200 means that all is OK, the second argument is an object containing the response headers.
+    
+    Read the Query String
+        The function passed into the "http.createServer()" has a "req" argument that represents the request from the client, as an object (http.IncomingMessage object).
+        This object has a property called "url" which holds the part of the url that comes after the domain name:
+        create "demo_http_url.js" file and add the following code: 
+            var http = require('http');
+            http.createServer(function (req, res) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.write(req.url);
+                res.end();
+            }).listen(8080);
+
+        If you have followed the same steps on your computer, 
+        you should see two different results when opening these two addresses: http://localhost:8080/summer
+        Will produce this result:   /summer
+
+    Split the Query String
+        There are built-in modules to easily split the query string into readable parts, such as the URL module.
+        Example "demo_querystring.js" file:   Split the query string into readable parts:
+            var http = require('http');
+            var url = require('url');
+
+            http.createServer(function (req, res) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+                var q = url.parse(req.url, true).query;
+                var txt = q.year + " " + q.month;
+                res.end(txt);
+            }).listen(8080);
+
+        The address: http://localhost:8080/?year=2017&month=July
+        Will produce this result:   2017 July
+
+Node.js File System Module
+    Node.js as a File Server
+        The Node.js file system module allows you to work with the file system on your computer.
+        To include the File System module, use the "require()" method:  var fs = require('fs');
+        Common use for the File System module:
+            - Read files
+            - Create files
+            - Update files
+            - Delete files
+            - Rename files
+   
+    Read Files
+        The "fs.readFile()" method is used to read files on your computer.
+        Assume we have the following HTML file (located in the same folder as Node.js):
+        "html_read_file.html" file and add the following code: 
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <title>Demo Read File</title>
+            </head>
+            <body>
+                <h1>My Header</h1>
+                <p>My paragraph.</p>
+            </body>
+            </html>
+        
+        Create a "demo_sys_read.js" file that reads the HTML file, and return the content:
+            var http =require('http');
+            var fs = require('fs');
+
+            http.createServer(function( req, res){
+                fs.readFile('html_read_file.html', function(err, data){
+                    res.writeHead(200, {'Conten-Type':'text/html'});
+                    res.write(data);
+                    res.end();
+                });
+            }).listen(8080);
+
+            console.log('Server running at http://localhost:8080/');
+            
+    Create Files
+        The File System module has methods for creating new files:
+            - fs.appendFile()
+            - fs.open()
+            - fs.writeFile()
+        
+        The "fs.appendFile()" method appends specified content to a file.If the file does not exist, the file will be created:
+            Example: Create a "demo_sys_create.js" file using the appendFile() method:
+                var fs = require('fs');
+                fs.appendFile('txt_sys_create_file.txt', 'Hello content!', function (err) {
+                    if (err) throw err;
+                    console.log('Saved!');
+                });
+        
+        The "fs.open()" method takes a "flag" as the second argument, if the flag is "w" for "writing", the specified file is opened for writing. If the file does not exist, an empty file is created:
+            Example (demo_sys_open.js): Create a new, empty file using the open() method:
+                var fs = require('fs');
+                fs.open('txt_sys_open_file.txt', 'w', function (err, file) {
+                    if (err) throw err;
+                    console.log('Saved!');
+                });
+        
+        The "fs.writeFile()" method replaces the specified file and content if it exists. If the file does not exist, a new file, containing the specified content, will be created:
+            Example: Create a "demo_sys_write.js" file using the writeFile() method:
+                var fs = require('fs');
+                fs.writeFile('txt_sys_write_file.txt', 'Hello content!', function (err) {
+                    if (err) throw err;
+                    console.log('Saved!');
+                });
+    Update Files
+        The File System module has methods for updating files:
+            - fs.appendFile()
+            - fs.writeFile()
+
+        The "fs.appendFile()" method appends the specified content at the end of the specified file:
+            Example:    Append "This is my text." to the end of the file "txt_sys_create_file.txt":
+                var fs = require('fs');
+                fs.appendFile('txt_sys_create_file.txt', ' This is my text.', function (err) {
+                    if (err) throw err;
+                    console.log('Updated!');
+                });
+        
+        The "fs.writeFile()" method replaces the specified file and content:
+            Example: Replace the content of the file "txt_sys_write_file.txt":
+            var fs = require('fs');
+            fs.writeFile('txt_sys_write_file.txt', 'This is my text', function (err) {
+                if (err) throw err;
+                console.log('Replaced!');
+            });
+
+    Delete Files
+        To delete a file with the File System module,  use the "fs.unlink()" method.
+        The "fs.unlink()" method deletes the specified file:
+        Example:    Delete "mynewfile2.txt":
+            var fs = require('fs');
+            fs.unlink('mynewfile2.txt', function (err) {
+                if (err) throw err;
+                console.log('File deleted!');
+            });
+
+    Rename Files
+        To rename a file with the File System module,  use the "fs.rename()" method.
+        The "fs.rename()" method renames the specified file:
+        Example:    Rename "mynewfile1.txt" to "myrenamedfile.txt":
+            var fs = require('fs');
+            fs.rename('mynewfile1.txt', 'myrenamedfile.txt', function (err) {
+                if (err) throw err;
+                console.log('File Renamed!');
+            });
+
+Node.js URL Module   
+    The Built-in URL Module
+        The URL module splits up a web address into readable parts.
+        To include the URL module, use the "require()" method: var url = require('url');
+        Parse an address with the "url.parse()" method, and it will return a URL object with each part of the address as properties:
+        Example: "demo_built-in_URL.js" file
+            var url = require('url');
+            var adr = 'http://localhost:8080/default.html?year=2017&month=february';
+            var q = url.parse(adr, true);
+
+            console.log(q.host); //returns 'localhost:8080'
+            console.log(q.pathname); //returns '/default.htm'
+            console.log(q.search); //returns '?year=2017&month=february'
+
+            var qdata = q.query; //returns an object: { year: 2017, month: 'february' }
+            console.log(qdata.month); //returns 'february'
+    
+    Node.js File Server
+        Now we know how to parse the query string, and in the previous chapter we learned how to make Node.js behave as a file server.
+        Let us combine the two, and serve the file requested by the client.
+        Create two html files and save them in the folder.
+            "html_summer.html" file
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                    <title>Summer</title>
+                </head>
+                <body>
+                    <h1>Summer</h1>
+                    <p>I love the sun!</p>
+                </body>
+                </html>
+            "html_winter.html" file
+        
+        Create a "demo_fileserver.js" file that opens the requested file and returns the content to the client. If anything goes wrong, throw a 404 error:
+            var http = require('http');
+            var url = require('url');
+            var fs = require('fs');
+
+            http.createServer(function (req, res) {
+                var q = url.parse(req.url, true);
+                var filename = "." + q.pathname;
+                fs.readFile(filename, function(err, data) {
+                    if (err) {
+                        res.writeHead(404, {'Content-Type': 'text/html'});
+                        return res.end("404 Not Found");
+                    }  
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write(data);
+                    return res.end();
+                });
+            }).listen(8080);
+
+        If you have followed the same steps on your computer, you should see two different results when opening these two addresses:
+        http://localhost:8080/html_summer.html
+        Will produce this result:
+            Summer
+            I love the sun!
+        
+        http://localhost:8080/html_winter.html
+        Will produce this result:
+            Winter
+            I love the snow!
+            
+        http://localhost:8080/index.html
+        Will produce this result:
+            404 Not Found
+
+Node.js NPM (Node Package Manager)
+    What is NPM?
+        NPM is a package manager for Node.js packages, or modules if you like.
+        "www.npmjs.com" hosts thousands of free packages to download and use.
+        The NPM program is installed on your computer when you install Node.js
+        NPM is already ready to run on your computer!
+    
+    Check NPM Version: Open console and type the following command: `npm -version`
+
+    Installing Modules using NPM
+        There is a simple syntax to install any Node.js module − `npm install <Module Name>`
+        For example, following is the command to install a famous Node.js web framework module called express −
+            `npm install express`
+        Now you can use this module in your js file as following −  var express = require('express');
+    
+    Uninstalling a Module
+        Use the following command to uninstall a Node.js module. The following command: `npm uninstall express`
+        Once NPM uninstalls the package, you can verify it by looking at the content of /node_modules/ directory or type the following command − `npm ls`
+
+    Updating a Module
+        Update package.json and change the version of the dependency to be updated 
+        and run the following command: `npm update express`
+    
+    Search a Module
+        Search a package name using NPM and run the following command: `npm search express`
+    
+    Create a Module
+        Creating a module requires package.json to be generated. 
+        Let's generate package.json using NPM, which will generate the basic skeleton of the package.json.
+        The following command: `npm init`
+    
+Node.js Events
+    Node.js is perfect for event-driven applications.
+
+    Events in Node.js
+        Every action on a computer is an event. Like when a connection is made or a file is opened.
+        Objects in Node.js can fire events, like the readStream object fires events when opening and closing a file:
+        Example: "demo_events_open.js" file
+            var fs = require('fs');
+            var readStream = fs.createReadStream('./demofile.txt');
+            /*Write to the console when the file is opened:*/
+            readStream.on('open', function () {
+                console.log('The file is open');
+            });
+
+    The EventEmitter Object
+        You can assign event handlers to your own events with the EventEmitter object.
+        In the example below we have created a function that will be executed when a "scream" event is fired.
+        To fire an event, use the "emit()" method.
+        Example: "demo_eventemitter.js" file
+            var events = require('events');
+            var eventEmitter = new events.EventEmitter();
+
+            //Create an event handler:
+            var myEventHandler = function () {
+                console.log('I hear a scream!');
+            }
+
+            //Assign the eventhandler to an event:
+            eventEmitter.on('scream', myEventHandler);
+
+            //Fire the 'scream' event:
+            eventEmitter.emit('scream');
+
+Node.js Upload Files
+    The Formidable Module
+        There is a very good module for working with file uploads, called "Formidable".
+        The Formidable module can be downloaded and installed using NPM: `npm install formidable`
+    After you have downloaded the Formidable module, you can include the module in any application:
+        var formidable = require('formidable');
+
+    Upload Files
+        Now you are ready to make a web page in Node.js that lets the user upload files to your computer:
+        Step 1: Create an Upload Form
+            Create a "demo_up_file.js" file that writes an HTML form, with an upload field:
+            Example: This code will produce an HTML form:
+                var http = require('http');
+
+                http.createServer(function (req, res) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+                    res.write('<input type="file" name="filetoupload"><br>');
+                    res.write('<input type="submit">');
+                    res.write('</form>');
+                    return res.end();
+                }).listen(8080);
+
+        Step 2: Parse the Uploaded File
+            Include the Formidable module to be able to parse the uploaded file once it reaches the server.
+            When the file is uploaded and parsed, it gets placed on a temporary folder on your computer.
+            Example: The file will be uploaded, and placed on a temporary folder:
+                var http = require('http');
+                var formidable = require('formidable');
+
+                http.createServer(function (req, res) {
+                    if (req.url == '/fileupload') {
+                        var form = new formidable.IncomingForm();
+                        form.parse(req, function (err, fields, files) {
+                        res.write('File uploaded');
+                        res.end();
+                        });
+                    } else {
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+                        res.write('<input type="file" name="filetoupload"><br>');
+                        res.write('<input type="submit">');
+                        res.write('</form>');
+                        return res.end();
+                    }
+                }).listen(8080);
+
+        Step 3: Save the File
+            When a file is successfully uploaded to the server, it is placed on a temporary folder.
+            The path to this directory can be found in the "files" object, passed as the third argument in the parse() method's callback function.
+            To move the file to the folder of your choice, use the File System module, and rename the file:
+            Example: Include the fs module, and move the file to the current folder:
+                var http = require('http');
+                var formidable = require('formidable');
+                var fs = require('fs');
+
+                http.createServer(function (req, res) {
+                    if (req.url == '/fileupload') {
+                        var form = new formidable.IncomingForm();
+                        form.parse(req, function (err, fields, files) {
+                        var oldpath = files.filetoupload.path;
+                        var newpath = 'C:/Users/Your Name/' + files.filetoupload.name;
+                        fs.rename(oldpath, newpath, function (err) {
+                            if (err) throw err;
+                            res.write('File uploaded and moved!');
+                            res.end();
+                        });
+                    });
+                    } else {
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+                        res.write('<input type="file" name="filetoupload"><br>');
+                        res.write('<input type="submit">');
+                        res.write('</form>');
+                        return res.end();
+                    }
+                }).listen(8080);
